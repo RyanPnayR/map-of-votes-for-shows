@@ -11,7 +11,7 @@ import {
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import { geoCentroid } from "d3-geo";
-import allStates from "../public/states-data.json";
+import allStates from "./utils/states-data.json";
 import sortBy from "lodash/sortBy";
 import { scaleLinear } from "d3-scale";
 import Airtable from "airtable";
