@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
   font-family: system-ui, sans-serif;
   font-size: 1.25rem;
@@ -12,4 +16,8 @@ svg {
   display: inline-block;
   vertical-align: middle;
   color: white;
+}
+
+.map-main-container {
+  display: grid;
 }

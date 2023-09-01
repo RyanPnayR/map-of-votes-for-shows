@@ -6,8 +6,6 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import Select from 'react-select';
 
-import "./styles.css";
-
 import MapChart from "./MapChart";
 interface SelectField {
   firstName: string,
@@ -31,7 +29,21 @@ function App() {
   const { control, register, handleSubmit, formState: { errors, defaultValues } } = useForm<SelectField>({
     resolver: yupResolver(schema),
   });
-  const onSubmit = data => console.log(data);
+  const onSubmit = data => {
+    console.log(data)
+    grecaptcha.enterprise.ready(async () => {
+      const token = await grecaptcha.enterprise.execute('6Le1jesnAAAAAJJsExRYNCddweA-ZDCDGuWWwtQd', { action: 'submit' });
+      console.log(token);
+      await fetch('https://react-email-resend-ten.vercel.app/api/vote', {
+        method: "POST",
+        body: JSON.stringify({
+          token,
+          formData: data
+        })
+      })
+      setIsModalOpen(false);
+    });
+  };
   console.log(defaultValues)
   const showModal = () => {
     setIsModalOpen(true);
@@ -49,9 +61,13 @@ function App() {
   return (
     <div>
       <MapChart />
-      <Button type="primary" onClick={showModal}>
-        Click here to tell me
-      </Button>
+      <div className="grid grid-rows-3 flex justify-center ">
+        <div className="row-start-1 row-end-2">
+          <button className="max-w-screen-sm rounded-none bg-[#fcff36] text-black hover:bg-[#d3d534] font-[orpheus-pro] font-medium tracking-[.04em] text-[1rem] py-[1.2em] px-[2.004em]" onClick={showModal}>
+            Click here to tell me
+          </button>
+        </div>
+      </div>
       <Modal
         title="Where Can I make You smile?"
         open={open}
@@ -64,68 +80,73 @@ function App() {
         <Form
           name="basic"
           layout="vertical"
-          labelCol={{ span: 16 }}
-          wrapperCol={{ span: 16 }}
           style={{ maxWidth: 600 }}
           initialValues={{ remember: true }}
           onFinish={handleSubmit(onSubmit)}
           onFinishFailed={() => console.log('failed')}
           autoComplete="off"
+          className="grid grid-rows-4 grid-cols-6"
         >
-          <Controller
-            name={"firstName"}
-            control={control}
-            render={({ field }) => {
-              return (
-                <Form.Item
-                  label="First Name"
-                  name="First Name"
-                  rules={[{ required: true, message: errors.firstName?.message }, { max: 80 }]}
-                >
-                  <Input type="text" placeholder="First name"  {...field} />
-                </Form.Item>
-              )
-            }}
-          />
 
-          <Controller
-            name={"lastName"}
-            control={control}
-            render={({ field }) => {
-              return (
-                <Form.Item
+            <Controller
+              name={"firstName"}
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Form.Item
+                    className="col-span-3"
+                    label="First Name"
+                    name="First Name"
+                    rules={[{ required: true, message: errors.firstName?.message }, { max: 80 }]}
+                  >
+                    <Input type="text" placeholder="First name"  {...field} />
+                  </Form.Item>
+                )
+              }}
+            />
+
+            <Controller
+              name={"lastName"}
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Form.Item
+                  className="col-span-3"
                   label="Last Name"
-                  name="Last Name"
-                  rules={[{ required: true, message: errors.lastName?.message }, { max: 100 }]}
-                >
-                  <Input type="text" placeholder="Last name"  {...field} />
-                </Form.Item>
-              )
-            }}
-          />
+                    name="Last Name"
+                    rules={[{ required: true, message: errors.lastName?.message }, { max: 100 }]}
+                  >
+                    <Input type="text" placeholder="Last name"  {...field} />
+                  </Form.Item>
+                )
+              }}
+            />
+          <div className="col-span-6">
 
-          <Controller
-            name={"email"}
-            control={control}
-            render={({ field }) => {
-              return (
-                <Form.Item
-                  label="Email"
-                  name="email"
-                  rules={[{ required: true, message: 'Please enter your email' }, { pattern: /^\S+@\S+$/i, message: "Email is not properly formated" }]}
-                >
-                  <Input type="text" placeholder="Email"  {...field} />
-                </Form.Item>
-              )
-            }}
-          />
-          <br></br>
-          <Controller
+            <Controller
+              name={"email"}
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Form.Item
+                    className=""
+                    label="Email"
+                    name="email"
+                    rules={[{ required: true, message: 'Please enter your email' }, { pattern: /^\S+@\S+$/i, message: "Email is not properly formated" }]}
+                  >
+                    <Input type="text" placeholder="Email"  {...field} />
+                  </Form.Item>
+                )
+              }}
+            />
+          </div>
+          <div className="col-span-6"> <Controller
             name={"states"}
             control={control}
             render={({ field }) => {
               return (
                 <Form.Item
+                  className=""
                   label="What state do you live in?"
                   name="state"
                   rules={[{ required: true, message: "Please selcet what state you live in." }]}
@@ -188,12 +209,19 @@ function App() {
               )
             }}
           />
+          </div>
+          <div className="col-start-3 col-end-4">
 
-          <Form.Item label=" ">
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
+            <Form.Item 
+              label=" ">
+              <button className=" bg-[#272727] g-recaptcha max-w-screen-sm rounded-none  text-white font-[orpheus-pro] font-medium tracking-[.04em] text-[1rem] py-[1.2em] px-[2.004em]"
+                data-sitekey="6Le1jesnAAAAAJJsExRYNCddweA-ZDCDGuWWwtQd"
+                data-callback='handleToken'
+                data-action='submit'>
+                Submit
+              </button>
+            </Form.Item>
+          </div>
 
         </Form>
       </Modal>
