@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
-import { Button, Modal, Form, Input } from 'antd';
+import { createRoot } from 'react-dom/client';
+import { Modal, Form, Input } from 'antd';
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
@@ -44,7 +44,7 @@ function App() {
       setIsModalOpen(false);
     });
   };
-  console.log(defaultValues)
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -88,39 +88,39 @@ function App() {
           className="grid grid-rows-4 grid-cols-6"
         >
 
-            <Controller
-              name={"firstName"}
-              control={control}
-              render={({ field }) => {
-                return (
-                  <Form.Item
-                    className="col-span-3"
-                    label="First Name"
-                    name="First Name"
-                    rules={[{ required: true, message: errors.firstName?.message }, { max: 80 }]}
-                  >
-                    <Input type="text" placeholder="First name"  {...field} />
-                  </Form.Item>
-                )
-              }}
-            />
+          <Controller
+            name={"firstName"}
+            control={control}
+            render={({ field }) => {
+              return (
+                <Form.Item
+                  className="col-span-3"
+                  label="First Name"
+                  name="First Name"
+                  rules={[{ required: true, message: errors.firstName?.message }, { max: 80 }]}
+                >
+                  <Input type="text" placeholder="First name"  {...field} />
+                </Form.Item>
+              )
+            }}
+          />
 
-            <Controller
-              name={"lastName"}
-              control={control}
-              render={({ field }) => {
-                return (
-                  <Form.Item
+          <Controller
+            name={"lastName"}
+            control={control}
+            render={({ field }) => {
+              return (
+                <Form.Item
                   className="col-span-3"
                   label="Last Name"
-                    name="Last Name"
-                    rules={[{ required: true, message: errors.lastName?.message }, { max: 100 }]}
-                  >
-                    <Input type="text" placeholder="Last name"  {...field} />
-                  </Form.Item>
-                )
-              }}
-            />
+                  name="Last Name"
+                  rules={[{ required: true, message: errors.lastName?.message }, { max: 100 }]}
+                >
+                  <Input type="text" placeholder="Last name"  {...field} />
+                </Form.Item>
+              )
+            }}
+          />
           <div className="col-span-6">
 
             <Controller
@@ -212,7 +212,7 @@ function App() {
           </div>
           <div className="col-start-3 col-end-4">
 
-            <Form.Item 
+            <Form.Item
               label=" ">
               <button className=" bg-[#272727] g-recaptcha max-w-screen-sm rounded-none  text-white font-[orpheus-pro] font-medium tracking-[.04em] text-[1rem] py-[1.2em] px-[2.004em]"
                 data-sitekey="6Le1jesnAAAAAJJsExRYNCddweA-ZDCDGuWWwtQd"
@@ -230,4 +230,5 @@ function App() {
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+const root = createRoot(rootElement); // createRoot(container!) if you use TypeScript
+root.render(<App />);

@@ -74,7 +74,7 @@ const MapChart = ({}) => {
                   let cur = allStates.find((s) => s.val === geo.id);
                   let fan = fans.find((f) => f.state === cur.id);
                   return (
-                    <>
+                    <React.Fragment key={`${geo.rsmKey}-1`}>
                       <Geography
                         id={`${geo.rsmKey}`}
                         key={geo.rsmKey}
@@ -161,7 +161,7 @@ const MapChart = ({}) => {
                             ))}
                         </g>
                       )}
-                    </>
+                    </React.Fragment>
                   );
                 })
               }
