@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { createRoot } from 'react-dom/client';
-import { Modal, Form, Input } from 'antd';
+import { Modal, Form, Input, message } from 'antd';
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
@@ -25,12 +25,32 @@ const schema = yup
   .required()
 function App() {
   const [open, setIsModalOpen] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const alertMessageKey = 'updatable';
 
   const { control, register, handleSubmit, formState: { errors, defaultValues } } = useForm<SelectField>({
     resolver: yupResolver(schema),
   });
+
+  const loading = () => {
+    messageApi.open({
+      key: alertMessageKey,
+      type: 'loading',
+      content: 'Submitting...',
+    });
+  };
+
+  const success = () => {
+    messageApi.open({
+      key: alertMessageKey,
+      type: 'success',
+      content: 'Thanks for letting me know :)',
+    });
+  };
   const onSubmit = data => {
     console.log(data)
+    setIsModalOpen(false);
+    loading();
     grecaptcha.enterprise.ready(async () => {
       const token = await grecaptcha.enterprise.execute('6Le1jesnAAAAAJJsExRYNCddweA-ZDCDGuWWwtQd', { action: 'submit' });
       console.log(token);
@@ -41,7 +61,7 @@ function App() {
           formData: data
         })
       })
-      setIsModalOpen(false);
+      success();
     });
   };
 
@@ -61,7 +81,8 @@ function App() {
   return (
     <div>
       <MapChart />
-      <div className="grid grid-rows-3 flex justify-center ">
+      {contextHolder}
+      <div className="my-20 grid grid-rows-3 flex justify-center ">
         <div className="row-start-1 row-end-2">
           <button className="max-w-screen-sm rounded-none bg-[#fcff36] text-black hover:bg-[#d3d534] font-[orpheus-pro] font-medium tracking-[.04em] text-[1rem] py-[1.2em] px-[2.004em]" onClick={showModal}>
             Click here to tell me
